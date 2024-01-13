@@ -1,0 +1,45 @@
+ import os
+import openai 
+from prompt_toolkit import prompt
+from prompt_toolkit.history import FileHistory
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+history = FileHistory('chat_history.txt')
+
+def get_response(prompt):
+  response = openai.Completion.create(
+    engine="gpt-3.5-turbo",
+    prompt=prompt,  
+    max_tokens=1024
+  )
+
+  message = response["choices"][0]["text"].strip()
+
+  return message
+
+print("Yes?")
+
+print("Type 'art' to start the conversation:")
+
+while True:
+  user_input = prompt("You: ", history=history)
+
+  if user_input.lower() == "exit":
+    break
+
+  if user_input.lower() == "art":
+    while True:
+      user_input = prompt("art: ", history=history)
+      
+      if user_input.lower() == "exit":
+        break
+
+      prompt = f"art: {user_input}\nAI:"  
+      ai_response = get_response(prompt)
+      print(f"AI: {ai_response}")
+
+  else:
+    print("Type 'art' to start conversing with the AI.")
+    
+print("Goodbye!")
